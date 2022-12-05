@@ -1,0 +1,59 @@
+const Student = require('../models/Student')
+module.exports = {
+    async createAluno(req, res) {
+        try {
+            const { nome, nota1, nota2 } = req.body
+            const student = await Student.create({ nome, nota1, nota2 })
+            res.status(200).json({ student })
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+    async updateAluno(req, res) {
+        try {
+            const { id } = req.params
+            const { nome, nota1, nota2 } = req.body
+            const student = await Student.findOne({ where: { id } })
+            if (!student) {
+                res.status(401).json({ message: "Nenhum aluno encontrado" })
+            } else {
+                const student = await Student.update({ nome, nota1,nota2 }, { where: { id } })
+                res.status(200).json({ student })
+            }
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+    async listAlunos(req, res) {
+        try {
+            const students = await Student.findAll()
+            if (!students) {
+                res.status(401).json({ message: 'Não existe alunos cadastrados' })
+            }
+            res.status(200).json({ students })
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+    async getIdAluno(req, res) {
+        try {
+            const student = await Student.findOne({ where: { id } })
+            if (!student) {
+                res.status(401).json({ message: 'Nenhum aluno encontrado' })
+            }
+            res.status(200).json({ students })
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+    async deleteAluno(req, res) {
+        const { id } = req.params
+        const student = await Student.findOne({ where: { id } })
+        if (!student) {
+            res.status(401).json({ message: 'Aluno não encontrado' })
+        } else {
+            await Student.destroy({ where: { id } })
+            res.status(200).json({ ok: true })
+        }
+    }
+}
